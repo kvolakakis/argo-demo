@@ -9,19 +9,21 @@
 > Before we start:
 ```
 helm repo add argo https://argoproj.github.io/argo-helm
+
+helm create namespace argo
 ```
 ### Argo Workflows
 
 > Install Argo Workflows and get it working: 
 ```
-helm install argo-workflows argo/argo-workflows
+helm install argo-workflows argo/argo-workflows -n argo
 
 ## get credentials (use Git Bash or linux-based terminal)
-SECRET=$(kubectl get sa argo-workflows-server -o=jsonpath='{.secrets[0].name}')
-ARGO_TOKEN="Bearer $(kubectl get secret $SECRET -o=jsonpath='{.data.token}' | base64 --decode)"
+SECRET=$(kubectl get sa -n argo argo-workflows-server -o=jsonpath='{.secrets[0].name}')
+ARGO_TOKEN="Bearer $(kubectl get secret -n argo $SECRET -o=jsonpath='{.data.token}' | base64 --decode)"
 echo $ARGO_TOKEN
 
-kubectl port-forward deployment/argo-workflows-server 2746:2746
+kubectl port-forward -n argo deployment/argo-workflows-server 2746:2746
 
 ## goto http://127.0.0.1:2746/workflows/ and use credentials to sign-in
 ```
@@ -124,13 +126,13 @@ spec:
 
 > Install Argo CD and get it working:
 ```
-helm install argo-cd argo/argo-cd
+helm install argo-cd argo/argo-cd -n argo
 
 ## Port forward to have access to the service 
-kubectl port-forward service/argo-cd-argocd-server -n default 8080:443
+kubectl port-forward -n argo service/argo-cd-argocd-server -n default 8080:443
 
 ## get credentials (use Git Bash or linux-based terminal)
-kubectl -n default get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+kubectl -n argo get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
 ## login from terminal (if needed)
 ./argocd login 127.0.0.1:8080 --username admin --password {TOKEN/password}
