@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollouts-example
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: rollouts-example
+  template:
+    metadata:
+      labels:
+        app: rollouts-example
+    spec:
+      containers:
+      - image: rollouts-example:v1.0
+        name: rollouts-example
+        ports:
+        - containerPort: 80
