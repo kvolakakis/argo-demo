@@ -1,0 +1,91 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: plokamia-argo-
+spec:
+  entrypoint: plokamia
+  templates:
+  - name: echo
+    inputs:
+      parameters:
+      - name: message
+    container:
+      image: alpine:3.7
+      command: [echo, "{{inputs.parameters.message}}"]
+  - name: plokamia
+    dag:
+      tasks:
+      - name: FOREHEAD
+        template: echo
+        arguments:
+          parameters: [{name: message, value: FOREHEAD}]
+      - name: EYE-RIGHT
+        dependencies: [FOREHEAD]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: EYE-RIGHT}]
+      - name: NOSE
+        dependencies: [EYE-LEFT, EYE-RIGHT]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: NOSE}]
+      - name: EYE-LEFT
+        dependencies: [FOREHEAD]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: EYE-LEFT}]
+      - name: CHEEK-RIGHT
+        dependencies: [EYE-RIGHT, NOSE]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: CHEEK-RIGHT}]
+      - name: CHEEK-LEFT
+        dependencies: [EYE-LEFT, NOSE]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: CHEEK-LEFT}]
+      - name: NECK
+        dependencies: [CHEEK-LEFT, CHEEK-RIGHT]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: NECK}]
+      - name: TENTACLE1
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE1}]
+      - name: TENTACLE2
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE2}]
+      - name: TENTACLE3
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE3}]
+      - name: TENTACLE4
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE4}]
+      - name: TENTACLE5
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE5}]
+      - name: TENTACLE6
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE6}]
+      - name: TENTACLE7
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE7}]
+      - name: TENTACLE8
+        dependencies: [NECK]
+        template: echo
+        arguments:
+          parameters: [{name: message, value: TENTACLE8}]

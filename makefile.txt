@@ -1,0 +1,16 @@
+all:
+	## start argo (helm or whatever)
+
+	## get credentials non-helm
+	SECRET=$(kubectl get sa -n argo argo-server -o=jsonpath='{.secrets[0].name}')
+	ARGO_TOKEN="Bearer $(kubectl get secret -n argo $SECRET -o=jsonpath='{.data.token}' | base64 --decode)"
+	echo $ARGO_TOKEN
+
+	## helm
+	## get credentials
+	SECRET=$(kubectl get sa argo-workflows-server -o=jsonpath='{.secrets[0].name}')
+	ARGO_TOKEN="Bearer $(kubectl get secret $SECRET -o=jsonpath='{.data.token}' | base64 --decode)"
+	echo $ARGO_TOKEN
+
+	## port-forward
+	kubectl port-forward deployment/argo-server 2746:2746 -n argo
