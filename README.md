@@ -8,7 +8,7 @@
 
 > Before we start:
 ```
-helm add repo argo # @kelado check if this is correct
+helm repo add argo https://argoproj.github.io/argo-helm
 ```
 ### Argo Workflows
 
@@ -126,10 +126,11 @@ spec:
 ```
 helm install argo-cd argo/argo-cd
 
+## Port forward to have access to the service 
+kubectl port-forward service/argo-cd-argocd-server -n default 8080:443
+
 ## get credentials (use Git Bash or linux-based terminal)
 kubectl -n default get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-
-kubectl port-forward service/argo-cd-argocd-server -n default 8080:443
 
 ## login from terminal (if needed)
 ./argocd login 127.0.0.1:8080 --username admin --password {TOKEN/password}
