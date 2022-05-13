@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test
+spec:
+  destination:
+    name: ''
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: examples/rollouts
+    repoURL: 'https://github.com/kvolakakis/argo-demo'
+    targetRevision: HEAD
+  project: default
