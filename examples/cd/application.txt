@@ -8,7 +8,7 @@ spec:
     namespace: default
     server: 'https://kubernetes.default.svc'
   source:
-    path: examples/rollouts
+    path: examples/cd
     repoURL: 'https://github.com/kvolakakis/argo-demo'
     targetRevision: HEAD
   project: default

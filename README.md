@@ -10,7 +10,7 @@
 ```
 helm repo add argo https://argoproj.github.io/argo-helm
 
-helm create namespace argo
+kubectl create namespace argo
 ```
 ### Argo Workflows
 
@@ -129,7 +129,7 @@ spec:
 helm install argo-cd argo/argo-cd -n argo
 
 ## Port forward to have access to the service 
-kubectl port-forward -n argo service/argo-cd-argocd-server -n default 8080:443
+kubectl port-forward -n argo service/argo-cd-argocd-server 8080:443
 
 ## get credentials (use Git Bash or linux-based terminal)
 kubectl -n argo get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
@@ -195,4 +195,42 @@ spec:
 
 ```
 
+### Argo Events
 
+```
+helm install argo-events argo/argo-events -n argo 
+
+cd example/events
+
+kubectl apply -f argo-events-event-bus.yaml -n argo
+kubectl apply -f argo-events-event-source.yaml -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+
+kubectl apply -f argo-events-plokamia-sensor.yaml -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+
+kubectl get workflows -n argo
+## also see workflows UI
+
+## to avoid conflicts with next example (using same event-source)
+kubectl delete -f argo-events-plokamia-sensor.yaml -n argo
+
+## does not work yet (even though it should). Check it out @kelado.
+kubectl apply -f argo-events-createpod-sensor.yaml -n argo
+
+kubectl get pods -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+kuebctl logs [created_pod_name] -n argo ## expect to see message sent with curl
+```
