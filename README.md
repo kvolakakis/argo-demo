@@ -232,5 +232,6 @@ curl -X POST \
     -H "Content-Type: application/json" \
     -d '{"message":"My first webhook"}' \
     http://localhost:12000/example
-kuebctl logs [created_pod_name] -n argo ## expect to see message sent with curl
+    
+kubectl logs [created_pod_name] -n argo ## expect to see message sent with curl
 ```
