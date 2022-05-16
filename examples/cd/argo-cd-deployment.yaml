@@ -14,7 +14,7 @@ spec:
         app: rollouts-example
     spec:
       containers:
-      - image: kvolakakis/rollouts-example:v1.0
+      - image: kvolakakis/rollouts-example:v3.0
         name: rollouts-example
         ports:
         - containerPort: 80
