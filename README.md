@@ -137,6 +137,48 @@ kubectl -n argo get secret argocd-initial-admin-secret -o jsonpath="{.data.passw
 ## login from terminal (if needed)
 ./argocd login 127.0.0.1:8080 --username admin --password {TOKEN/password}
 ```
+
+### Argo Events
+
+```
+helm install argo-events argo/argo-events -n argo 
+
+cd example/events
+
+kubectl apply -f argo-events-event-bus.yaml -n argo
+kubectl apply -f argo-events-event-source.yaml -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+
+kubectl apply -f argo-events-plokamia-sensor.yaml -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+
+kubectl get workflows -n argo
+## also see workflows UI
+
+## to avoid conflicts with next example (using same event-source)
+kubectl delete -f argo-events-plokamia-sensor.yaml -n argo
+
+## does not work yet (even though it should). Check it out @kelado.
+kubectl apply -f argo-events-createpod-sensor.yaml -n argo
+
+kubectl get pods -n argo
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{"message":"My first webhook"}' \
+    http://localhost:12000/example
+    
+kubectl logs [created_pod_name] -n argo ## expect to see message sent with curl
+```
+
 > Argo CD Deployment (examples/cd/argo-cd-deployment.yaml) and Service (examples/cd/argo-cd-svc.yaml)
 
 ```yaml
@@ -195,43 +237,4 @@ spec:
 
 ```
 
-### Argo Events
 
-```
-helm install argo-events argo/argo-events -n argo 
-
-cd example/events
-
-kubectl apply -f argo-events-event-bus.yaml -n argo
-kubectl apply -f argo-events-event-source.yaml -n argo
-
-curl -X POST \
-    -H "Content-Type: application/json" \
-    -d '{"message":"My first webhook"}' \
-    http://localhost:12000/example
-
-kubectl apply -f argo-events-plokamia-sensor.yaml -n argo
-
-curl -X POST \
-    -H "Content-Type: application/json" \
-    -d '{"message":"My first webhook"}' \
-    http://localhost:12000/example
-
-kubectl get workflows -n argo
-## also see workflows UI
-
-## to avoid conflicts with next example (using same event-source)
-kubectl delete -f argo-events-plokamia-sensor.yaml -n argo
-
-## does not work yet (even though it should). Check it out @kelado.
-kubectl apply -f argo-events-createpod-sensor.yaml -n argo
-
-kubectl get pods -n argo
-
-curl -X POST \
-    -H "Content-Type: application/json" \
-    -d '{"message":"My first webhook"}' \
-    http://localhost:12000/example
-    
-kubectl logs [created_pod_name] -n argo ## expect to see message sent with curl
-```
